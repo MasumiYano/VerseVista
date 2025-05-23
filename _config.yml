@@ -1,0 +1,69 @@
+# _config.yml - GitHub Pages configuration
+title: VerseVista
+description: Transform your images into beautiful poetry with AI
+author: Masumi Yano
+url: https://yourusername.github.io/VerseVista
+
+# GitHub Pages settings
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+# SEO and social media
+twitter:
+  username: luke_y
+  card: summary_large_image
+
+social:
+  name: Masumi Yano
+  links:
+    - https://github.com/MasumiYano
+
+# Exclude files from processing
+exclude:
+  - versevista.py
+  - main.py
+  - requirements.txt
+  - .env
+  - __pycache__/
+  - .idea/
+
+---
+
+# .github/workflows/deploy.yml - GitHub Actions for deployment
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: '.'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v3
