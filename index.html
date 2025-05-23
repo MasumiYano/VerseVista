@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VerseVista - AI Poetry Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 0 80px;
+            text-align: center;
+            color: white;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #fff, #f0f8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Features Section */
+        .features {
+            background: white;
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .section-title p {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid #e0e8ff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Demo Section */
+        .demo {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 80px 0;
+            color: white;
+            text-align: center;
+        }
+
+        .demo-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .demo h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .demo p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* Tech Stack */
+        .tech-stack {
+            background: #f8f9fa;
+            padding: 60px 0;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .tech-item {
+            text-align: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 15px;
+            border: 1px solid #e9ecef;
+            transition: transform 0.3s ease;
+        }
+
+        .tech-item:hover {
+            transform: translateY(-3px);
+        }
+
+        .tech-item i {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #667eea;
+        }
+
+        /* Footer */
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section a {
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: #34495e;
+            border-radius: 50%;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: #667eea;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">🎨 VerseVista</a>
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#demo">Demo</a></li>
+                        <li><a href="#tech">Tech</a></li>
+                        <li><a href="#github">GitHub</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Transform Images into Poetry</h1>
+            <p>VerseVista brings your photos to life with beautiful, AI-generated poetry. Upload any image and watch as artificial intelligence crafts unique verses inspired by what it sees.</p>
+            <div class="cta-buttons">
+                <a href="#" class="btn btn-primary">
+                    ✨ Try Live Demo
+                </a>
+                <a href="https://github.com/YOUR_USERNAME/VerseVista" class="btn btn-secondary">
+                    📂 View on GitHub
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Features</h2>
+                <p>Powerful AI-driven poetry generation with multiple styles and themes</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI-Powered Analysis</h3>
+                    <p>Advanced computer vision analyzes your images to understand mood, colors, subjects, and atmosphere before crafting the perfect poem.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎭</div>
+                    <h3>Multiple Poetry Styles</h3>
+                    <p>Choose from various poetry forms including free verse, haiku, sonnets, limericks, and more to match your creative vision.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Theme Customization</h3>
+                    <p>Guide the AI with optional themes like nature, love, or melancholy to create poetry that resonates with your intended mood.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Multiple AI Providers</h3>
+                    <p>Switch between OpenAI and Anthropic AI models to explore different creative approaches and writing styles.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>User-Friendly Interface</h3>
+                    <p>Clean, intuitive Streamlit interface makes it easy to upload images and generate beautiful poetry in seconds.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💾</div>
+                    <h3>Download & Share</h3>
+                    <p>Save your generated poems as text files and share your AI-created poetry with friends and family.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="demo" class="demo">
+        <div class="container">
+            <div class="demo-content">
+                <h2>Experience the Magic</h2>
+                <p>See VerseVista in action! Upload your favorite photo and watch as AI transforms it into beautiful, evocative poetry that captures the essence of your image.</p>
+                <a href="#" class="btn btn-primary">
+                    🚀 Launch Demo App
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="tech" class="tech-stack">
+        <div class="container">
+            <div class="section-title">
+                <h2>Built With</h2>
+                <p>Modern technologies for seamless poetry generation</p>
+            </div>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <div style="font-size: 2.5rem; color: #3776ab;">🐍</div>
+                    <h4>Python</h4>
+                </div>
+                <div class="tech-item">
+                    <div style="font-size: 2.5rem; color: #ff4b4b;">📊</div>
+                    <h4>Streamlit</h4>
+                </div>
+                <div class="tech-item">
+                    <div style="font-size: 2.5rem; color: #412991;">🤖</div>
+                    <h4>OpenAI API</h4>
+                </div>
+                <div class="tech-item">
+                    <div style="font-size: 2.5rem; color: #cc785c;">🧠</div>
+                    <h4>Anthropic</h4>
+                </div>
+                <div class="tech-item">
+                    <div style="font-size: 2.5rem; color: #306998;">🖼️</div>
+                    <h4>Pillow</h4>
+                </div>
+                <div class="tech-item">
+                    <div style="font-size: 2.5rem; color: #2e8b57;">🔧</div>
+                    <h4>Requests</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>VerseVista</h3>
+                    <p>Transforming images into beautiful poetry with the power of artificial intelligence.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <p><a href="#demo">Live Demo</a></p>
+                    <p><a href="https://github.com/YOUR_USERNAME/VerseVista">GitHub Repository</a></p>
+                    <p><a href="https://github.com/YOUR_USERNAME/VerseVista/blob/main/README.md">Documentation</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Technology</h3>
+                    <p><a href="https://streamlit.io/">Streamlit</a></p>
+                    <p><a href="https://openai.com/">OpenAI API</a></p>
+                    <p><a href="https://anthropic.com/">Anthropic Claude</a></p>
+                </div>
+            </div>
+            <div class="social-links">
+                <a href="https://github.com/YOUR_USERNAME" title="GitHub">📂</a>
+                <a href="#" title="Demo">✨</a>
+            </div>
+            <p style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #34495e;">
+                © 2024 VerseVista. Licensed under MIT License.
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
