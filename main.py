@@ -4,7 +4,6 @@ import os
 from PIL import Image
 from versevista import VerseVista
 
-# Try to load .env file if python-dotenv is available
 try:
     from dotenv import load_dotenv
     load_dotenv()
@@ -16,6 +15,15 @@ st.set_page_config(
     page_icon="🎨",
     layout="wide"
 )
+
+def get_api_key(provider):
+    """Get API key from Streamlit secrets or environment variables"""
+    key_name = f"{provider.upper()}_API_KEY"
+    
+    try:
+        return st.secrets[key_name]
+    except (KeyError, FileNotFoundError):
+        return os.getenv(key_name)
 
 def main():
     st.title("🎨 VerseVista")
@@ -75,17 +83,14 @@ def main():
         # Generate button
         if uploaded_file is not None:
             if st.button("✨ Generate Poem", type="primary", use_container_width=True):
-                # Check if API key is available
-                if api_provider == "openai":
-                    api_key = os.getenv('OPENAI_API_KEY')
-                    if not api_key:
-                        st.error("❌ OPENAI_API_KEY not found in environment variables. Please set it in your .env file.")
-                        st.stop()
-                elif api_provider == "anthropic":
-                    api_key = os.getenv('ANTHROPIC_API_KEY')
-                    if not api_key:
-                        st.error("❌ ANTHROPIC_API_KEY not found in environment variables. Please set it in your .env file.")
-                        st.stop()
+                # Get API key using the new function
+                api_key = get_api_key(api_provider)
+                
+                if not api_key:
+                    st.error(f"❌ {api_provider.upper()}_API_KEY not found. Please check your secrets configuration.")
+                    st.info("💡 **For Streamlit Cloud**: Add your API key in the app settings under 'Secrets management'")
+                    st.info("💡 **For local development**: Add your API key to a .env file")
+                    st.stop()
                 
                 with st.spinner("🎭 Crafting your poem..."):
                     try:
@@ -170,4 +175,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
